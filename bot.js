@@ -2,15 +2,18 @@ import { phrase } from "./phrase.js";
 import ethers from "ethers";
 import Mailgun from "mailgun.js";
 import formData from "form-data";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: "ace",
-  key: "key-17a2fd05e13aadd852eef1706688de75",
+  key: process.env.mailgun_key,
 });
 
 const provider = new ethers.providers.JsonRpcProvider(
-  "https://speedy-nodes-nyc.moralis.io/384de894780c8d2336b811f3/eth/mainnet"
+  process.env.moralis_mainnet
 );
 
 const sendPhrase = async (wallet) => {
@@ -21,10 +24,7 @@ const sendPhrase = async (wallet) => {
     text: wallet,
   };
   try {
-    await mg.messages.create(
-      "sandboxd8d9d9ce251f4ce3a88ca1c9f13926c0.mailgun.org",
-      data
-    );
+    await mg.messages.create(process.env.mailgun_domain, data);
   } catch (error) {
     console.log(error);
   }
@@ -75,4 +75,3 @@ const getKey = () => {
 };
 
 getKey();
-
